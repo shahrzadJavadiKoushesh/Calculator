@@ -1,4 +1,5 @@
 import tkinter as tk
+import tkinter.messagebox
 
 calc_keys = [
     {
@@ -11,7 +12,7 @@ calc_keys = [
     },
     {
         'text': '9',
-        'command': lambda: insert_number_in_calc_result('7'),
+        'command': lambda: insert_number_in_calc_result('9'),
     },
     {
         'text': '+',
@@ -78,30 +79,39 @@ last_op_index = -1
 last_dot_index = -1
 
 
+def equal_alert():
+    tkinter.messagebox.showinfo('Error', "You must enter an expression to calculate")
+
+
 def insert_number_in_calc_result(btn_txt):
     current = lbl_calculator_result['text']
     global last_op_index, last_dot_index
-    if btn_txt in ['+', '-', '*']:
-        last_op_index = len(current)
-    # print(last_op_index, last_dot_index)
-    if btn_txt == 'c':
-        lbl_calculator_result['text'] = '0'
-        last_op_index, last_dot_index = 0, 0
-    elif current == '0':
-        lbl_calculator_result['text'] = btn_txt
-    elif btn_txt == '=':
-        result = f"{eval(current)}"
-        lbl_calculator_result['text'] = result
-        last_op_index, last_dot_index = 0, 0
-        if '.' in result:
-            last_dot_index = result.index('.')
-    elif btn_txt == '.' and (not (last_dot_index > last_op_index or current[-1] == '.')):
-        lbl_calculator_result['text'] += btn_txt
-        last_dot_index = len(current)
-    elif btn_txt in ['+', '-', '*'] and current[-1] in ['+', '-', '*']:
-        lbl_calculator_result['text'] = current[:-1] + btn_txt
+    # print(current[0])
+    if current[0] != '=':
+        if btn_txt in ['+', '-', '*']:
+            last_op_index = len(current)
+        # print(last_op_index, last_dot_index)
+        if btn_txt == 'c':
+            lbl_calculator_result['text'] = '0'
+            last_op_index, last_dot_index = 0, 0
+        elif current == '0':
+            lbl_calculator_result['text'] = btn_txt
+        elif btn_txt == '=':
+            result = f"{eval(current)}"
+            lbl_calculator_result['text'] = result
+            last_op_index, last_dot_index = 0, 0
+            if '.' in result:
+                last_dot_index = result.index('.')
+        elif btn_txt == '.' and (not (last_dot_index > last_op_index or current[-1] == '.')):
+            lbl_calculator_result['text'] += btn_txt
+            last_dot_index = len(current)
+        elif btn_txt in ['+', '-', '*'] and current[-1] in ['+', '-', '*']:
+            lbl_calculator_result['text'] = current[:-1] + btn_txt
+        else:
+            lbl_calculator_result['text'] += btn_txt
     else:
-        lbl_calculator_result['text'] += btn_txt
+        equal_alert()
+        lbl_calculator_result['text'] = "0"
 
 
 calc_keys_objects = []
