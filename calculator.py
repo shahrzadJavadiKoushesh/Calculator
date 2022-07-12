@@ -67,6 +67,8 @@ calc_keys = [
         'command': lambda: insert_number_in_calc_result('='),
     },
 ]
+final_results = [] * 10  # to store last 10 calculations
+
 window = tk.Tk()
 
 lbl_calculator_result = tk.Label(
@@ -86,7 +88,6 @@ def equal_alert():
 def insert_number_in_calc_result(btn_txt):
     current = lbl_calculator_result['text']
     global last_op_index, last_dot_index
-    # print(current[0])
     if current[0] != '=':
         if btn_txt in ['+', '-', '*']:
             last_op_index = len(current)
@@ -98,6 +99,8 @@ def insert_number_in_calc_result(btn_txt):
             lbl_calculator_result['text'] = btn_txt
         elif btn_txt == '=':
             result = f"{eval(current)}"
+            final_results.append(result)
+            # print(final_results)
             lbl_calculator_result['text'] = result
             last_op_index, last_dot_index = 0, 0
             if '.' in result:
@@ -113,6 +116,30 @@ def insert_number_in_calc_result(btn_txt):
         equal_alert()
         lbl_calculator_result['text'] = "0"
 
+
+def show_history():
+    history_window = tk.Toplevel(window)
+    history_window.title('History')
+    history_window.geometry("200x200")
+    list_of_lbls = []
+    for i in range(len(final_results)):
+        lbl = tk.Label(
+            master=history_window,
+            text=final_results[i],
+            height=5,
+            pady=10
+        )
+        list_of_lbls.append(lbl)
+    for k, lbl in enumerate(list_of_lbls):
+        lbl.grid(row=k, sticky='nswe')
+
+
+result_btn = tk.Button(
+    master=window,
+    text='history',
+    height=5,
+    command=show_history
+).grid(row=5, columnspan=4, sticky='nswe')
 
 calc_keys_objects = []
 for calc_key_data in calc_keys:
